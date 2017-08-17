@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 
-import { dbColors, userList} from '../api/tasks.js';
+import { dbColors, userList} from '../api/items.js';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import Item from './Item.jsx';
 

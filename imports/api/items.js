@@ -11,7 +11,7 @@ if (Meteor.isServer) {
   // Accounts.createUser(
   //           {
   //               username: 'admin',
-  //               password: '123456',
+  //               password: '11111',
   //               profile: {
   //                   firstName: 'Oleg',
   //                   lastName: 'Yuom',
