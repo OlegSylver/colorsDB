@@ -45,9 +45,9 @@ class App extends Component { constructor(props) { super(props);
     <thead style={{"backgroundColor":'#b8b8b8'}}><tr>
       <th style={thStyle}>Del</th>
       <th style={thStyle}>Sel</th>
-      <th key='Id' style={thStyle}><ActiveSortLink cid="sortID" key="sortID" icon='unsort' text="Id" /></th>
-      <th key='Colors' style={thStyle}><ActiveSortLink cid="sortColors" key="sortColors" icon='unsort' text="Colors" /></th>
-      <th key='Date' style={thStyle}><ActiveSortLink cid="sortDate" key="sortDate" icon='unsort' text="Date" /></th>
+      <th key='Id' style={thStyle}><ActiveSortLink onSelectedSort={this.onSelectedSort} cid="sortID" key="sortID" icon='unsort' text="Id" /></th>
+      <th key='Colors' style={thStyle}><ActiveSortLink onSelectedSort={this.onSelectedSort}  cid="sortColors" key="sortColors" icon='unsort' text="Colors" /></th>
+      <th key='Date' style={thStyle}><ActiveSortLink onSelectedSort={this.onSelectedSort}  cid="sortDate" key="sortDate" icon='unsort' text="Date" /></th>
       <th style={thStyle}>Times</th>
       </tr></thead>
     <tbody>{data}</tbody>
@@ -55,44 +55,20 @@ class App extends Component { constructor(props) { super(props);
     <tr>
       <td></td><td></td>
       <td colSpan={4}>
-        <ActivePageLink cid="linkPage" key="linkPage" />
+        <ActivePageLink onSelectedSort={this.onNextPage} current={1} total={1}  cid="linkPage" key="linkPage" />
         </td>
     </tr></tfoot></table></div>);
     }
 
-prevPage(){
-  function handleClick(e) {
-   e.preventDefault();
-  console.log("td name="+name);
-}}
-
-nextPage(){
-  function handleClick(e) {
-   e.preventDefault();
-  console.log("td name="+name);
-}}
-
-sortColum(id){
-  // console.log("sort name="+id);
-  function handleClick(e) {
-  //  e.preventDefault();
- console.log("sort name="+e);
-}
+onSelectedSort(name,sortOrder){
+  console.log("select sort=",name,sortOrder);
 }
 
-getIcon(name){
-  // console.log("td name="+name);
-  let btStyle={'padding':'5px','cursor':'default','textDecoration': 'none','cursor': 'pointer'};
-  //&#9650; // UP
-  //&#9660; // DOWN
-  // &#9658; // RIGTH
-  // &#9666; //LEFT
-  // &diams; // DOWN&UP
+onNextPage(prevOrNext){
 
-return(<a  href="#" style={btStyle}  onClick={this.sortColum("id")}>&nbsp; &#9666;&nbsp;</a>);
-  // return (<span>&nbsp;&diams;&nbsp;</span>);
-    // return <TiArrowUnsorted />;
+  console.log("prevOrNext=",prevOrNext);
 }
+
 render() { return ( <div className="container">
         <header><label style={{'display': "inline-block"}}><AccountsUIWrapper /></label>&nbsp;&nbsp;&nbsp;&nbsp;
           <h1>Test Results List ({this.props.incompleteCount})</h1>
