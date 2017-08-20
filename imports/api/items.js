@@ -19,20 +19,13 @@ if (Meteor.isServer) { // This code only runs on the server
                 offices: ['001', '002']
             });}
 
-  Meteor.publish('userList', function (){
-    return Meteor.users.find({});
-  });
-
   Meteor.publish('dbColors', function tasksPublication() {
-    // console.log("db ="+dbColors.find());
-    // console.log("user ="+Meteor.userId()());
-    return dbColors.find({
-    });
+    return dbColors.find({});
   });
 }
 
 Meteor.methods({
-  'items.remove'(itemId) { dbColors.remove(itemId);},
+  'items.remove'(itemId) {dbColors.remove(itemId);},
   'items.setChecked'(itemId, setChecked) {
     check(setChecked, Boolean);
     dbColors.update(itemId, { $set: { checked: setChecked } });

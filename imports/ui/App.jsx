@@ -21,6 +21,7 @@ class App extends Component {
         this.state = { hideCompleted: props.skipSelected.get(), totalPages: 1 };
         this.onSelectedSort = this.onSelectedSort.bind(this);
         this.onNextPage = this.onNextPage.bind(this);
+        this.test = this.test.bind(this);
       }
 
     componentWillReceiveProps(newProp){
@@ -86,22 +87,35 @@ class App extends Component {
           this.props.sortOrder.set(n);
       }
 
+    test() {
+      console.log("currentUser=",this.props.currentUser);
+      Meteor.call('items.checkUser', this.props.currentUser);
+    }
     onNextPage(curPage){curPage--; skipItems.set(curPage*itemsPerPage);}
 
-    render() { return ( <div className="container">
+    render() {
+      if (this.props.currentUser){
+       return ( <div className="container">
         <header><label style={{'display': "inline-block"}}><AccountsUIWrapper /></label>&nbsp;&nbsp;&nbsp;&nbsp;
           <h1>Concentration Test Results List ({this.props.itemsCount})</h1>
           <label className="hide-completed">
             <input type="checkbox" readOnly checked={this.state.hideCompleted} onClick={this.toggleHideCompleted.bind(this)} />
-             Hide Selected Results
-           </label></header>
+             Hide Selected Results</label>
+            </header>
          {this.renderItems()}
           <div id='footer' style={{'left':'0px', 'bottom':'0px', 'width':'100%', 'marginTop': '5px', 'background':'#BBBBBB','textAlign':'center'}}>
             <div style={{'textAlignVertical': "center"}}>
             <span style={{'verticalAlign': "middle"}}>&copy;2017&nbsp;<strong>Ongoza.com</strong></span>
           </div></div>
-      </div> );}
-      }
+        </div> );
+      }else{return (<div className="container">
+         <header><label style={{'display': "inline-block"}}><AccountsUIWrapper /></label>&nbsp;&nbsp;&nbsp;&nbsp;
+           <h1>Concentration Test Results</h1></header>
+          <div style={{'marginTop': '15px','textAlign':'center'}}><h1>Please login</h1></div>
+          </div>
+          )
+    }}
+  }
 
 
 export default createContainer(() => {
