@@ -12,20 +12,22 @@ import React, { Component} from 'react';
 let sortName = new ReactiveVar('guid');
  let sortOrder = new ReactiveVar(-1);
  let skipItems = new ReactiveVar(0);
+ let skipSelected = new ReactiveVar(0);
  // let itemsPerPage = new ReactiveVar(20);
- let itemsPerPage = 3;
+ let itemsPerPage = 5;
 
 class App extends Component {
     constructor(props){ super(props);
-        this.state = { hideCompleted: false, totalPages: 1 };
+        this.state = { hideCompleted: props.skipSelected.get(), totalPages: 1 };
         this.onSelectedSort = this.onSelectedSort.bind(this);
         this.onNextPage = this.onNextPage.bind(this);
       }
 
     componentWillReceiveProps(newProp){
-        // console.log("floor=",newProp.itemsCount,itemsPerPage,newProp.itemsCount/itemsPerPage,~~(newProp.itemsCount/itemsPerPage)+1);
-        let num = ~~(newProp.itemsCount/itemsPerPage+1);
-        this.setState({totalPages: num});
+        let num = newProp.itemsCount/itemsPerPage, num1= ~~num;
+        if(num>num1){ num1++;}
+        this.setState({totalPages: ~~(num1)});
+
       }
 
     handleSubmit(event) {
@@ -35,29 +37,20 @@ class App extends Component {
       ReactDOM.findDOMNode(this.refs.textInput).value = '';
       }
 
-    toggleHideCompleted() {
-        this.setState({ hideCompleted: !this.state.hideCompleted});
-      }
+    toggleHideCompleted(){
+      this.props.skipSelected.set(!this.state.hideCompleted);
+      this.setState({ hideCompleted: !this.state.hideCompleted});
+    }
 
     renderItems() {
-      // console.log("dd=",this.props.items);
       if(this.props.items!=undefined){
         let filteredItems = this.props.items;
-        // this.setState({'totalPages': filteredItems.length});
-        // console.log("user:"+JSON.stringify(Meteor.users.find({}).fetch()));
-        // console.log("items:"+JSON.stringify(filteredItems));
         if (this.state.hideCompleted) {filteredItems = filteredItems.filter(item => !item.checked);}
         let data =[]; trOdd=true;
         filteredItems.map((item) => {
-          // console.log("item:"+JSON.stringify(item));
           const currentUserId = this.props.currentUser && this.props.currentUser._id;
           const showPrivateButton = item.owner === currentUserId;
-          data.push(<Item
-              key={item._id}
-              item={item}
-              odd={trOdd}
-              showPrivateButton={showPrivateButton}
-            />);
+          data.push(<Item key={item._id} item={item} odd={trOdd} />);
           if(trOdd){trOdd=false;}else{trOdd=true;}
         });
         let thStyle={"borderLeftWidth":"1px", 'borderLeftStyle':'solid','borderLeftColor':'black'};
@@ -89,23 +82,23 @@ class App extends Component {
         // console.log('refs.props=',this.refs[oldName].props.icon);
         if(oldName!=name){
           this.refs[oldName].setUnsort();}
-        this.props.sortName.set(name);
-        this.props.sortOrder.set(n);
+          this.props.sortName.set(name);
+          this.props.sortOrder.set(n);
       }
 
     onNextPage(curPage){curPage--; skipItems.set(curPage*itemsPerPage);}
 
     render() { return ( <div className="container">
         <header><label style={{'display': "inline-block"}}><AccountsUIWrapper /></label>&nbsp;&nbsp;&nbsp;&nbsp;
-          <h1>Concentration Test Results List ({this.props.incompleteCount})</h1>
+          <h1>Concentration Test Results List ({this.props.itemsCount})</h1>
           <label className="hide-completed">
             <input type="checkbox" readOnly checked={this.state.hideCompleted} onClick={this.toggleHideCompleted.bind(this)} />
              Hide Selected Results
            </label></header>
          {this.renderItems()}
-          <div id='footer' style={{'position':'fixed', 'left':'0px', 'bottom':'0px', 'width':'100%', 'height':'30px', 'background':'blue','textAlign':'center'}}>
-            <div style={{'textAlignVertical': "center",'marginTop': '5px'}}>
-            <span style={{'color': 'white'}}>&copy;2017&nbsp;<strong>Ongoza.com</strong></span>
+          <div id='footer' style={{'left':'0px', 'bottom':'0px', 'width':'100%', 'marginTop': '5px', 'background':'#BBBBBB','textAlign':'center'}}>
+            <div style={{'textAlignVertical': "center"}}>
+            <span style={{'verticalAlign': "middle"}}>&copy;2017&nbsp;<strong>Ongoza.com</strong></span>
           </div></div>
       </div> );}
       }
@@ -113,12 +106,11 @@ class App extends Component {
 
 export default createContainer(() => {
   Meteor.subscribe('dbColors');
-  let sort={}; sort[sortName.get()]= sortOrder.get();
-  // console.log('sort=',items.length);
+  let find={}, sort={}; sort[sortName.get()]= sortOrder.get();
+  if(skipSelected.get()!=0){find={'checked':{'$ne': true}};}
   return {
-    // userList: userList.find().fetch(),
-    items: dbColors.find({},{limit: itemsPerPage, skip:skipItems.get(), sort}).fetch(),
-    itemsCount: dbColors.find({}).count(),
-    sortName, sortOrder, skipItems,
+    items: dbColors.find(find,{limit: itemsPerPage, skip:skipItems.get(), sort}).fetch(),
+    itemsCount: dbColors.find(find).count(),
+    sortName, sortOrder, skipItems, skipSelected,
     currentUser: Meteor.userId(),
     };}, App);

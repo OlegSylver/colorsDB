@@ -4,14 +4,13 @@ import classnames from 'classnames';
 import moment from 'moment';
 
 export default class Item extends Component {
+
   toggleChecked() { Meteor.call('items.setChecked', this.props.item._id, !this.props.item.checked);}
+
   deleteThisTask() { Meteor.call('items.remove', this.props.item._id); }
-  togglePrivate() { Meteor.call('items.setPrivate', this.props.item._id, ! this.props.item.private); }
+
   render() {
-    // Give tasks a different className when they are checked off,
-    // so that we can style them nicely in CSS
-    // console.log("item="+JSON.stringify(this.props));
-    let dat = moment(parseInt(this.props.item.date)).format('YYYY/MM/DD HH:MM');
+    let dat = moment(parseInt(this.props.item.date)).format('YYYY/MM/DD\u00A0HH:MM');
     const itemClassName = classnames({
       checked: this.props.item.checked,
       private: this.props.item.private,

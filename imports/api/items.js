@@ -32,57 +32,10 @@ if (Meteor.isServer) { // This code only runs on the server
 }
 
 Meteor.methods({
-  'items.insert'(text) {
-    console.log("start insert");
-    console.log("user ="+Meteor.user()());
-    check(text, String);
-
-    // Make sure the user is logged in before inserting a task
-    // if (! this.userId) {
-    //   throw new Meteor.Error('not-authorized');
-    // }
-
-    dbColors.insert({
-      text,
-      createdAt: new Date(),
-      owner: this.userId,
-      username: Meteor.users.findOne(this.userId).username,
-    });
-  },
-  'items.remove'(itemId) {
-    check(itemId, String);
-
-    const task = dbColors.findOne(itemId);
-    if (task.private && task.owner !== this.userId) {
-      // If the task is private, make sure only the owner can delete it
-      throw new Meteor.Error('not-authorized');
-    }
-
-    dbColors.remove(itemId);
-  },
+  'items.remove'(itemId) { dbColors.remove(itemId);},
   'items.setChecked'(itemId, setChecked) {
-    check(itemId, String);
     check(setChecked, Boolean);
-
-    const item = dbColors.findOne(itemId);
-    if (item.private && item.owner !== this.userId) {
-      // If the task is private, make sure only the owner can check it off
-      throw new Meteor.Error('not-authorized');
-    }
-
     dbColors.update(itemId, { $set: { checked: setChecked } });
   },
-  'items.setPrivate'(itemId, setToPrivate) {
-    check(itemId, String);
-    check(setToPrivate, Boolean);
 
-    const task = dbColors.findOne(itemId);
-
-    // Make sure only the task owner can make a task private
-    if (task.owner !== this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
-
-    dbColors.update(itemId, { $set: { private: setToPrivate } });
-  },
 });
