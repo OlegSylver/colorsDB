@@ -9,7 +9,7 @@ import React, { Component} from 'react';
  import Item from './Item.jsx';
  import {TiArrowSortedDown, TiArrowSortedUp, TiArrowUnsorted, TiMediaFastForwardOutline, TiMediaRewindOutline} from 'react-icons/lib/ti';
 
-let sortName = new ReactiveVar('guid');
+let sortName = new ReactiveVar('date');
  let sortOrder = new ReactiveVar(-1);
  let skipItems = new ReactiveVar(0);
  let skipSelected = new ReactiveVar(0);
@@ -33,9 +33,9 @@ class App extends Component {
 
     handleSubmit(event) {
       event.preventDefault();
-      const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-      Meteor.call('items.insert', text);
-      ReactDOM.findDOMNode(this.refs.textInput).value = '';
+      // const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+      Meteor.call('insertData', {"guid":11});
+      // ReactDOM.findDOMNode(this.refs.textInput).value = '';
       }
 
     toggleHideCompleted(){
@@ -61,16 +61,18 @@ class App extends Component {
           <thead style={{"backgroundColor":'#b8b8b8'}}><tr>
             <th style={thStyle}>Del</th>
             <th style={thStyle}>Sel</th>
-            <th key='Id' style={thStyle}><ActiveSortLink ref='guid' onSelectedSort={this.onSelectedSort} cid="guid" key="sortID" icon='down' text="Id" /></th>
+            <th key='Date' style={thStyle}><ActiveSortLink ref='date' onSelectedSort={this.onSelectedSort}  cid="date" key="sortDate" icon='down' text="Date" /></th>
             <th key='Colors' style={thStyle}><ActiveSortLink ref='colors' onSelectedSort={this.onSelectedSort}  cid="colors" key="sortColors" icon='unsort' text="Colors" /></th>
-            <th key='Date' style={thStyle}><ActiveSortLink ref='date' onSelectedSort={this.onSelectedSort}  cid="date" key="sortDate" icon='unsort' text="Date" /></th>
-            <th style={thStyle}>Times</th>
+            <th style={thStyle}>Pass time</th>
+            <th key='Id' style={thStyle}><ActiveSortLink ref='guid' onSelectedSort={this.onSelectedSort} cid="guid" key="sortID" icon='unsort' text="Device Id" /></th>
+            <th style={thStyle}>Time in  % for selecting a card</th>
+            <th style={thStyle}>Time in  ms for watching a card</th>
             </tr></thead>
           <tbody>{data}</tbody>
             <tfoot style={{"backgroundColor":'#b8b8b8'}}>
           <tr>
             <td></td><td></td>
-            <td colSpan={4}>
+            <td colSpan={6}>
               <ActivePageLink ref='actPage' onSelectedSort={this.onNextPage} total={this.state.totalPages}  cid="linkPage" key="linkPage" />
               </td>
           </tr></tfoot></table></div>);
@@ -94,9 +96,11 @@ class App extends Component {
     onNextPage(curPage){curPage--; skipItems.set(curPage*itemsPerPage);}
 
     render() {
+      // <button key="textButton" onClick={this.handleSubmit}>Test</button>
       if (this.props.currentUser){
        return ( <div className="container">
         <header><label style={{'display': "inline-block"}}><AccountsUIWrapper /></label>&nbsp;&nbsp;&nbsp;&nbsp;
+
           <h1>Concentration Test Results List ({this.props.itemsCount})</h1>
           <label className="hide-completed">
             <input type="checkbox" readOnly checked={this.state.hideCompleted} onClick={this.toggleHideCompleted.bind(this)} />
@@ -122,6 +126,7 @@ export default createContainer(() => {
   Meteor.subscribe('dbColors');
   let find={}, sort={}; sort[sortName.get()]= sortOrder.get();
   if(skipSelected.get()!=0){find={'checked':{'$ne': true}};}
+  // console.log("sort",sort);
   return {
     items: dbColors.find(find,{limit: itemsPerPage, skip:skipItems.get(), sort}).fetch(),
     itemsCount: dbColors.find(find).count(),
