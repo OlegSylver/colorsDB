@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component} from 'react';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import moment from 'moment';
@@ -23,7 +23,7 @@ export default class Item extends Component {
     if(this.props.item.check){check = this.props.item.checked;}
     if(this.props.item.total){ total = this.props.item.total;}
     if(this.props.item.guid){ guid = this.props.item.guid;}
-    if(this.props.item.colors){ colors = this.props.item.colors.replace(/\D/g,'');}        
+    if(this.props.item.colors){ colors = this.props.item.colors.replace(/\D/g,'');}
     if(this.props.item.times){times = JSON.stringify(this.props.item.times).replace(/["']/g,'').slice(1,-1);}
     if(this.props.item.times){pickes = JSON.stringify(this.props.item.pickes).replace(/["']/g,'').slice(1,-1);}
     return (

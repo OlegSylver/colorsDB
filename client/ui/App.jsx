@@ -3,7 +3,7 @@ import React, { Component} from 'react';
  import { Meteor } from 'meteor/meteor';
  import { createContainer } from 'meteor/react-meteor-data';
 
- import { dbColors, userList} from '../api/items.js';
+ import { dbColors, userList} from '../../imports/items.js';
  import {ActiveSortLink,ActivePageLink } from './ActiveLink.jsx';
  import AccountsUIWrapper from './AccountsUIWrapper.jsx';
  import Item from './Item.jsx';

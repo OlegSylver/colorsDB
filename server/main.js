@@ -12,10 +12,15 @@ if (Meteor.isServer) { // This code only runs on the server
                 offices: ['001', '002']
             });}
 dbColors = new Mongo.Collection('dbColors');
+dbTutorials = new Mongo.Collection('dbTutorials');
 }
 
 Meteor.publish('dbColors', function tasksPublication() {
   return dbColors.find({});
+});
+
+Meteor.publish('dbTutorials', function tasksPublication() {
+  return dbTutorials.find({});
 });
 
 Meteor.methods({

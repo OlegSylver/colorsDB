@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 let listIcons = {'up':	'\u25B4','down':'\u25BE','right':'\u25BA','left':'\u25C4','unsort':'\u2666'}
  let linkStyle = {'padding':'5px','cursor':'default','textDecoration': 'none','cursor': 'pointer'};
