@@ -1,4 +1,5 @@
 // Web server for recieving data from clients and put it to MongoDB
+//TODO add time update on client data update
 
 var port = 27080;
 var http = require('http');
@@ -44,12 +45,12 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                     let i = arrSessinons.indexOf(sesionId);
                     if(i>-1){
                       arrSessinons.splice(i, 1);
-                      answer=JSON.stringify({'logout':1});
+                      answer=JSON.stringify(["logout",1,sesionId]);
                       for(let k=0;k<arrCurrentUsers.length;k++){
                         if(sesionId==arrCurrentUsers[k][2]){arrCurrentUsers.splice(k, 1);}}
                       }else{ // should  the server delete all sessions for this login?
                           console.log('Not correct session data.');}
-                }else{answer=JSON.stringify({'logout':-1});}
+                }else{answer=JSON.stringify(['logout',0,"Error!\nCan not recognize query data.",sesionId]);}
             break;
             case "_unregister":
               if(query.l&&query.p){
@@ -64,11 +65,11 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                       while(arrSessinons.indexOf(id)>-1){id = createSessionID();}
                       arrSessinons.push(id);
                       arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
-                      answer=JSON.stringify({'unregisterID':id});
+                      answer=JSON.stringify(["unregister",1,id]);
                       console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                    }else{ answer= JSON.stringify({'unregisterID':-3})}
-                  }else{ answer= JSON.stringify({'unregisterID':-2})}
-                }else{ answer= JSON.stringify({'unregisterID':-1})}
+                    }else{ answer= JSON.stringify(["unregister",0,"Error!\nDB error!"])}
+                  }else{ answer= JSON.stringify(["unregister",0,"Error!\nCan not find user."])}
+                }else{ answer= JSON.stringify(["unregister",0,"Error!\nCan not recognize query data."])}
                 break;
             case "_register":
               if(query.l&&query.p){
@@ -83,11 +84,11 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                       while(arrSessinons.indexOf(id)>-1){id = createSessionID();}
                       arrSessinons.push(id);
                       arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
-                      answer=JSON.stringify({'registerID':id});
+                      answer=JSON.stringify(["register",1,id]);
                       console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                    }else{ answer= JSON.stringify({'registerID':-3})}
-                  }else{ answer= JSON.stringify({'registerID':-2})}
-                }else{ answer= JSON.stringify({'registerID':-1})}
+                    }else{ answer= JSON.stringify(["register",0,"Error!\nDB error!"])}
+                  }else{ answer= JSON.stringify(["register",0,"Error!\nUser does not exist."])}
+                }else{ answer= JSON.stringify(["register",0,"Error!\nCan not recognize query data."])}
                 break;
           case "_login":
             if(query.l&&query.p){
@@ -101,11 +102,11 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                     while(arrSessinons.indexOf(id)>-1){id = createSessionID();}
                     arrSessinons.push(id);
                     arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
-                    answer=JSON.stringify({'sessionID':id});
+                    answer=JSON.stringify(["login",1,id]);
                     console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                  }else{ answer= JSON.stringify({'sessionID':-3})}
-                }else{ answer= JSON.stringify({'sessionID':-2})}
-              }else{ answer= JSON.stringify({'sessionID':-1})}
+                  }else{ answer= JSON.stringify(["login",0,"Error!\nDB error!"])}
+                }else{ answer= JSON.stringify(["login",0,"Error!\nUser does not exist."])}
+              }else{ answer= JSON.stringify(["login",0,"Error!\nCan not recognize query data."])}
               break;
           case '_find':
             console.log('find=', arrCmd[3],' db=',arrCmd[2]);
@@ -123,11 +124,11 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                      let dbResult = dbList[arrCmd[2]].find(postJson,{reactive: false}).fetch();
                     // let dbResult = dbList['dbColors'].find({},{reactive: false}).fetch();
                    // console.log('!!!answer=', dbResult);
-                    answer = JSON.stringify({'findResult':dbResult});
-                  }else{ answer= JSON.stringify({'findResult':-3})}
-                }else{ answer= JSON.stringify({'findResult':-2})}
-              }catch(e){answer = JSON.stringify({'findResult':-4}); console.log(answer); }
-            }else{ answer= JSON.stringify({'findResult':-1})}
+                    answer = JSON.stringify(["find",1,dbResult]);
+                  }else{ answer= JSON.stringify(["find",0,"Error!\nDB error!"])}
+                }else{ answer= JSON.stringify(["find",0,"Error!\nUser does not exist."])}
+              }catch(e){answer = JSON.stringify(["find",0,"Error!\nCan not parse query data to JSON."])}
+            }else{ answer= JSON.stringify(["find",0,"Error!\nCan not recognize query data."])}
             break;
           case '_insert':
             if(data){
@@ -137,15 +138,15 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                 console.log('postJson=', postJson);
                 len = postJson.length;
                 if(len){for(var i=0;i<len;i++){
-                    dbList[arrCmd[2]].insert(postJson[i], function(error,result){if(error){console.log('InsertionError: '+error);}});
-                }}
-              }catch(e){answer = JSON.stringify({'newSessionID':'Error parse json.'}); console.log(answer); }
-            }else{answer= JSON.stringify({'newSessionID':'No data for insert.'}); console.log(answer);}
-            break;
-          default:  answer= JSON.stringify({'Server':"Can not recognize command"});  break;
-        }
-      }else{ answer = 'Error db does not exist path='+cmd; console.log(answer);}
-    }else{answer ='Error pathName path='+cmd; console.log(answer);}
+                    dbList[arrCmd[2]].insert(postJson[i], function(error,result){if(error){console.log('InsertionError: '+error); }});
+                  }}
+                }catch(e){answer = JSON.stringify(["insert",0,"Error!\nCan not parse query data to JSON."])}
+              }else{answer= JSON.stringify(["insert",0,"Error!\nNo data for insert."]); console.log(answer);}
+              break;
+            default:  answer= JSON.stringify(["server",0,"Error!\nCan not recognize command"]);  break;
+          }
+      }else{ answer = JSON.stringify(["server",0,"Error!\nDB does not exist path="+cmd]); console.log(answer);}
+    }else{answer = JSON.stringify(["server",0,"Error!\nCommand has not enough parametrs."+cmd]); console.log(answer);}
     response.write(answer);
     response.end();
     console.log(answer);
@@ -153,7 +154,7 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
 });
 
 // check and remove old sessions each 10 min
-setInterval(checkOldSessions, 600000);
+//setInterval(checkOldSessions, 600000);
 
 function checkOldSessions(){
   console.log("Check old connections.");
