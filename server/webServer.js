@@ -50,7 +50,7 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                         if(sesionId==arrCurrentUsers[k][2]){arrCurrentUsers.splice(k, 1);}}
                       }else{ // should  the server delete all sessions for this login?
                           console.log('Not correct session data.');}
-                }else{answer=JSON.stringify(['logout',0,"Error!\nCan not recognize query data.",sesionId]);}
+                }else{answer=JSON.stringify(['logout',-1,"Error!\nCan not recognize query data.",sesionId]);}
             break;
             case "_unregister":
               if(query.l&&query.p){
@@ -62,14 +62,16 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                    console.log('result=',result);
                   if(!result.error){
                       let id = createSessionID();
-                      while(arrSessinons.indexOf(id)>-1){id = createSessionID();}
+                      while(arrSessinons.indexOf(id)>-1){
+                        console.log('already exist id=',id);
+                        id = createSessionID();}
                       arrSessinons.push(id);
                       arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
                       answer=JSON.stringify(["unregister",1,id]);
-                      console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                    }else{ answer= JSON.stringify(["unregister",0,"Error!\nDB error!"])}
-                  }else{ answer= JSON.stringify(["unregister",0,"Error!\nCan not find user."])}
-                }else{ answer= JSON.stringify(["unregister",0,"Error!\nCan not recognize query data."])}
+                      console.log('unregister login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
+                    }else{ answer= JSON.stringify(["unregister",-3,"Error!\nPassword is wrong!"])}
+                  }else{ answer= JSON.stringify(["unregister",-2,"Error!\nCan not find user."])}
+                }else{ answer= JSON.stringify(["unregister",-1,"Error!\nCan not recognize query data."])}
                 break;
             case "_register":
               if(query.l&&query.p){
@@ -85,10 +87,10 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                       arrSessinons.push(id);
                       arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
                       answer=JSON.stringify(["register",1,id]);
-                      console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                    }else{ answer= JSON.stringify(["register",0,"Error!\nDB error!"])}
-                  }else{ answer= JSON.stringify(["register",0,"Error!\nUser does not exist."])}
-                }else{ answer= JSON.stringify(["register",0,"Error!\nCan not recognize query data."])}
+                      console.log('register login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
+                    }else{ answer= JSON.stringify(["register",-3,"Error!\nDB error!"])}
+                  }else{ answer= JSON.stringify(["register",-2,"Error!\nUser already exist."])}
+                }else{ answer= JSON.stringify(["register",-1,"Error!\nCan not recognize query data."])}
                 break;
           case "_login":
             if(query.l&&query.p){
@@ -103,10 +105,10 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                     arrSessinons.push(id);
                     arrCurrentUsers.push([id,new Date().getTime(),id,query[0],query[1]]);
                     answer=JSON.stringify(["login",1,id]);
-                    console.log('login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' arr=',arrCurrentUsers);
-                  }else{ answer= JSON.stringify(["login",0,"Error!\nDB error!"])}
-                }else{ answer= JSON.stringify(["login",0,"Error!\nUser does not exist."])}
-              }else{ answer= JSON.stringify(["login",0,"Error!\nCan not recognize query data."])}
+                    console.log('login login=', arrCmd[3],' db=',arrCmd[2],' id='+id,' guid=',query.id);
+                  }else{ answer= JSON.stringify(["login",-3,"Error!\nWrong password!"])}
+                }else{ answer= JSON.stringify(["login",-2,"Error!\nUser does not exist."])}
+              }else{ answer= JSON.stringify(["login",-1,"Error!\nCan not recognize query data."])}
               break;
           case '_find':
             console.log('find=', arrCmd[3],' db=',arrCmd[2]);
@@ -115,41 +117,43 @@ sendCommand=Meteor.bindEnvironment(function(response,cmd,data,query){
                  post = data.substring(5);
                 // post ='{"guid":"5a0bcde4-5513-4bd9-87c6-392680ba416d"}';
                 postJson = JSON.parse(post);
-                console.log('postJson=', postJson);
+                console.log('find postJson=', postJson);
                 let user = Accounts.findUserByEmail(query.l);
                 if(user){
                   let result = Accounts._checkPassword(user, query.p);
                   if(!result.error){
-                    console.log('Result: start',arrCmd[2]);
-                     let dbResult = dbList[arrCmd[2]].find(postJson,{reactive: false}).fetch();
+                    let query= postJson[0];
+                    //console.log('Find query: ',arrCmd[2],query);
+                     let dbResult = dbList[arrCmd[2]].find(query,{reactive: false}).fetch();
                     // let dbResult = dbList['dbColors'].find({},{reactive: false}).fetch();
-                   // console.log('!!!answer=', dbResult);
+                    //console.log('!!!answer=', dbResult);
                     answer = JSON.stringify(["find",1,dbResult]);
-                  }else{ answer= JSON.stringify(["find",0,"Error!\nDB error!"])}
-                }else{ answer= JSON.stringify(["find",0,"Error!\nUser does not exist."])}
-              }catch(e){answer = JSON.stringify(["find",0,"Error!\nCan not parse query data to JSON."])}
-            }else{ answer= JSON.stringify(["find",0,"Error!\nCan not recognize query data."])}
+                  }else{ answer= JSON.stringify(["find",-4,"Error!\nDB error!"])}
+                }else{ answer= JSON.stringify(["find",-3,"Error!\nUser does not exist."])}
+              }catch(e){answer = JSON.stringify(["find",-2,"Error!\nCan not parse query data to JSON."])}
+            }else{ answer= JSON.stringify(["find",-1,"Error!\nCan not recognize query data."])}
             break;
           case '_insert':
-            if(data){
+            if(query.l&&query.p&&data){
               try{
                 post = data.substring(5);
                 postJson = JSON.parse(post);
-                console.log('postJson=', postJson);
                 len = postJson.length;
                 if(len){for(var i=0;i<len;i++){
+                  console.log('insert postJson=',i, postJson[i]);
                     dbList[arrCmd[2]].insert(postJson[i], function(error,result){if(error){console.log('InsertionError: '+error); }});
                   }}
-                }catch(e){answer = JSON.stringify(["insert",0,"Error!\nCan not parse query data to JSON."])}
-              }else{answer= JSON.stringify(["insert",0,"Error!\nNo data for insert."]); console.log(answer);}
+                    answer = JSON.stringify(["insert",1,len]);
+                }catch(e){answer = JSON.stringify(["insert",-2,"Error!\nCan not parse query data to JSON."])}
+              }else{answer= JSON.stringify(["insert",-1,"Error!\nNo data for insert."]); console.log(answer);}
               break;
-            default:  answer= JSON.stringify(["server",0,"Error!\nCan not recognize command"]);  break;
+            default:  answer= JSON.stringify(["server",-3,"Error!\nCan not recognize command"]);  break;
           }
-      }else{ answer = JSON.stringify(["server",0,"Error!\nDB does not exist path="+cmd]); console.log(answer);}
-    }else{answer = JSON.stringify(["server",0,"Error!\nCommand has not enough parametrs."+cmd]); console.log(answer);}
+      }else{ answer = JSON.stringify(["server",-2,"Error!\nDB does not exist path="+cmd]); console.log(answer);}
+    }else{answer = JSON.stringify(["server",-1,"Error!\nCommand has not enough parametrs."+cmd]); console.log(answer);}
     response.write(answer);
     response.end();
-    console.log(answer);
+    //console.log(answer);
   } //else{ console.log("fav ico");}
 });
 
