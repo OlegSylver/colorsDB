@@ -1,7 +1,7 @@
 # dbColors
 React.js & Meteor.js web app for The Concentration Test Oculus app.
 App include The Simple Reactive Table component with  pagination, sorting and masking server reactive functions.
-
+```
 INSTALLATION
 $ curl https://install.meteor.com/ | sh
 More info about installing meteor: https://www.meteor.com/install
@@ -16,3 +16,4 @@ Password: '11111'
 
 Screenshort
 ![Alt text](/art/main.png?raw=true "colorsDB Main page.")
+```
