@@ -15,4 +15,4 @@ Login: 'admin@colorsServer.com'
 Password: '11111'
 
 Screenshort
-![Alt text](/art/main.jpg?raw=true "colorsServer Main page.")
+![Alt text](/art/main.png?raw=true "colorsDB Main page.")
