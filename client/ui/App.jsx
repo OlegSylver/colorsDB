@@ -109,7 +109,7 @@ class App extends Component {
          {this.renderItems()}
           <div id='footer' style={{'left':'0px', 'bottom':'0px', 'width':'100%', 'marginTop': '5px', 'background':'#BBBBBB','textAlign':'center'}}>
             <div style={{'textAlignVertical': "center"}}>
-            <span style={{'verticalAlign': "middle"}}>&copy;2017&nbsp;<strong>Ongoza.com</strong></span>
+            <span style={{'verticalAlign': "middle"}}>&copy;2017&nbsp;<strong>Oleg Sylver</strong></span>
           </div></div>
         </div> );
       }else{return (<div className="container">
