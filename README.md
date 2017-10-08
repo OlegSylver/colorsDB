@@ -13,7 +13,7 @@ $ meteor
 Once your app is running, go to: http://localhost:3000
 Login: 'admin@colorsServer.com'
 Password: '11111'
+```
 
 Screenshort
 ![Alt text](/art/main.png?raw=true "colorsDB Main page.")
-```
