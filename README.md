@@ -1,6 +1,6 @@
 # dbColors
-React.js & Meteor.js web app for The Concentration Test Oculus app.
-App include The Simple Reactive Table component with  pagination, sorting and masking server reactive functions.
+Bootstrap, React.js & Meteor.js web app for The Concentration Test Oculus app.
+App include The Simple Reactive Table component with  pagination, sorting and masking by server-side reactive functions.
 ```
 INSTALLATION
 $ curl https://install.meteor.com/ | sh
