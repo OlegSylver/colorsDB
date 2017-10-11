@@ -25,8 +25,10 @@ Meteor.publish('dbTutorials', function tasksPublication() {
 
 Meteor.methods({
   'items.remove'(itemId) {dbColors.remove(itemId);},
-  'items.setChecked'(itemId, setChecked) { check(setChecked, Boolean);
-    dbColors.update(itemId, { $set: { checked: setChecked } });
+  'items.setChecked'(itemId, setChecked) {
+    console.log('setChecked=', itemId, setChecked);
+    //check(setChecked, Boolean);
+    dbColors.update(itemId, { $set: { checked: setChecked }});
   },
 
 });
