@@ -1,15 +1,10 @@
 import React, { Component} from 'react';
 import { Meteor } from 'meteor/meteor';
-//import classnames from 'classnames';
- import { createContainer } from 'meteor/react-meteor-data';
- // import { withTracker } from 'meteor/react-meteor-data';
- import { dbColors, userList} from '../../imports/items.js';
- import {ActiveSortLink,ActivePageLink } from './ActiveLink.jsx';
- import {Col, Label, FormControl, Button, Table} from 'react-bootstrap';
-
-
+import { createContainer } from 'meteor/react-meteor-data';
+import { dbColors, userList} from '../../imports/items.js';
+import {ActiveSortLink,ActivePageLink } from './ActiveLink.jsx';
+import {Col, Label, FormControl, Button, Table} from 'react-bootstrap';
 import moment from 'moment';
-
 
 let sortName = new ReactiveVar('date');
  let sortOrder = new ReactiveVar(-1);

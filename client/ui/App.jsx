@@ -8,7 +8,7 @@ export default class App extends Component {
     constructor(props){ super(props);}
 
     render() {
-    //  console.log("app start",Meteor.userId());
+      console.log("app start",Meteor.userId());
       if (Meteor.userId()){
        return ( <div className="container">
             <AppHeader />
