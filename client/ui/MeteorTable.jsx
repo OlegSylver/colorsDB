@@ -90,8 +90,7 @@ class MeteorTable extends Component {
               let n = this.props.sortOrder.get() === 1 ? -1 : 1;
               let oldName = this.props.sortName.get();
               // console.log('refs.props=',this.refs[oldName].props.icon);
-              if(oldName!=name){
-                this.refs[oldName].setUnsort();}
+              if(oldName!=name){ if(this.refs[oldName]){  this.refs[oldName].setUnsort();}}
                 this.props.sortName.set(name);
                 this.props.sortOrder.set(n);
             }
