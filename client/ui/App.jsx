@@ -1,8 +1,8 @@
 import React, { Component} from 'react';
- import ReactDOM from 'react-dom';
- import { Meteor } from 'meteor/meteor';
- import MeteorTable from './MeteorTable.jsx';
- import AppHeader from './Header.jsx';
+import ReactDOM from 'react-dom';
+import { Meteor } from 'meteor/meteor';
+import MeteorTable from './MeteorTable.jsx';
+import AppHeader from './Header.jsx';
 
 export default class App extends Component {
     constructor(props){ super(props);}

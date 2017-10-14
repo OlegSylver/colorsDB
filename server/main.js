@@ -2,18 +2,18 @@ if (Meteor.isServer) { // This code only runs on the server
   if ( Meteor.users.find().count() === 0 ) {
     Accounts.createUser({
                 username: 'admin',
-                password: '11111',
+                password: '1',
                 profile: {
                     firstName: 'Oleg',
-                    lastName: 'Yuom',
+                    lastName: 'Sylver',
                     gender: 'M'
                 },
-                email: 'oleg@ongoza.com',
+                email: 'a@a.com',
                 offices: ['001', '002']
             });}
-dbColors = new Mongo.Collection('dbColors');
-dbTutorials = new Mongo.Collection('dbTutorials');
 }
+const dbTutorials = new Mongo.Collection('dbTutorials');
+export const dbColors = new Mongo.Collection('dbColors');
 
 Meteor.publish('dbColors', function tasksPublication() {
   return dbColors.find({});
@@ -24,11 +24,16 @@ Meteor.publish('dbTutorials', function tasksPublication() {
 });
 
 Meteor.methods({
-  'items.remove'(itemId) {dbColors.remove(itemId);},
+  'items.insert'(data) { return dbColors.insert(data) },
+  'items.remove'(itemId) {
+    let res = dbColors.remove(itemId)
+    console.log("del=",res)
+    return res
+  },
   'items.setChecked'(itemId, setChecked) {
     console.log('setChecked=', itemId, setChecked);
     //check(setChecked, Boolean);
-    dbColors.update(itemId, { $set: { checked: setChecked }});
+    return dbColors.update(itemId, { $set: { checked: setChecked }});
   },
 
 });

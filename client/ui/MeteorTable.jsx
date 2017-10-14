@@ -7,11 +7,10 @@ import moment from 'moment';
 
 const dbColors = new Mongo.Collection('dbColors');
 let sortName = new ReactiveVar('date');
- let sortOrder = new ReactiveVar(-1);
- let skipItems = new ReactiveVar(0);
- let skipSelected = new ReactiveVar(0);
-
- let tableHeader = [
+let sortOrder = new ReactiveVar(-1);
+let skipItems = new ReactiveVar(0);
+let skipSelected = new ReactiveVar(0);
+let tableHeader = [
    {name:"Del", type:"action",text:"Del",format:"Button"},
    {name:"Sel", type:"boolean",text:"Sel",format:"Boolean"},
    {name:"date", type:"activeLink",text:"Date",format:"Date"},
@@ -21,8 +20,7 @@ let sortName = new ReactiveVar('date');
    {name:"times", type:"data",text:"Time in  % for selecting a card",format:"JSON_Digits"},
    {name:"pickes", type:"data",text:"Time in  ms for watching a card",format:"JSON"},
  ];
- // let itemsPerPage = new ReactiveVar(20);
- let itemsPerPage = 5;
+let itemsPerPage = 5;
 
 class MeteorTable extends Component {
     constructor(props){ super(props);
@@ -37,12 +35,6 @@ class MeteorTable extends Component {
             this.setState({totalPages: ~~(num1)});
 
           }
-          // handleSubmit(event) {
-          //   event.preventDefault();
-          //   // const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-          //   Meteor.call('insertData', {"guid":11});
-          //   // ReactDOM.findDOMNode(this.refs.textInput).value = '';
-          //   }
 
       toggleHideCompleted(){
             this.props.skipSelected.set(!this.state.hideCompleted);
@@ -68,8 +60,6 @@ class MeteorTable extends Component {
               });
               let thStyle={"borderLeftWidth":"1px", 'borderLeftStyle':'solid','borderLeftColor':'black'};
               let btStyle={'padding':'5px','cursor':'default','textDecoration': 'none','cursor': 'pointer'};
-              // style={{"borderWidth":"1px", 'borderStyle':'solid'}}
-              // style={{"backgroundColor":'#b8b8b8',"color": "white"}}
               return (<div key="resultsList">
                 <Table striped bordered condensed>
                 <thead><tr>
@@ -126,17 +116,12 @@ class Item extends Component {
 
       deleteThisTask() { Meteor.call('items.remove', this.props.item._id); }
 
-    //  insertData(){ dbColors.insert({"date":"111",'id':11});}
-
       render() {
-        // let trStyle={'backgroundColor':'#DDDDDD'};if(this.props.odd){ trStyle={'backgroundColor':'#FFFFFF'};}
         let tdStyle={};
         let trStyle={};
-        // let tdStyle={"borderLeftWidth":"1px", 'borderLeftStyle':'solid','borderLeftColor':'black'};
         let check = false; if(this.props.item.checked){check=this.props.item.checked;}
         //console.log('line 11=',this.props.item);
         let line = this.props.headers.map((value)=>{
-          //console.log('value name=',value.name);
           if(this.props.item[value.name]){let data;
             switch(value.format) {
               case "Date": data=<td style={tdStyle} key ={value.name} >&nbsp;{moment(parseInt(this.props.item[value.name])).format('YYYY/MM/DD\u00A0HH:MM')}&nbsp;</td>;break;

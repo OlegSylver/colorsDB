@@ -11,8 +11,8 @@ $ meteor npm install --save
 $ meteor
 
 Once your app is running, go to: http://localhost:3000
-Login: 'admin@colorsServer.com'
-Password: '11111'
+Login: 'a@a.com'
+Password: '1'
 ```
 
 Screenshort
